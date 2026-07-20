@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repeat tour with hotel — prototype</title>
+<style>
+  :root {
+    --text-primary: #1a1a1a;
+    --text-secondary: #5a5954;
+    --text-muted: #888780;
+    --border: #e2e0d7;
+    --border-strong: #c7c5ba;
+    --surface-0: #f5f4ef;
+    --surface-1: #f4f3ee;
+    --surface-2: #ffffff;
+    --accent-text: #0c447c;
+    --accent-bg: #e6f1fb;
+    --accent-border: #85b7eb;
+    --success-text: #27500a;
+    --success-bg: #eaf3de;
+    --success-border: #639922;
+    --warning-text: #633806;
+    --warning-bg: #faeeda;
+    --warning-border: #ba7517;
+    --danger-text: #791f1f;
+    --danger-border: #a32d2d;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .masthead h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  .masthead p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .badge-proto {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-text);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .app-frame {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px 28px;
+  }
+  .section-label {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  #period-tabs {
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .period-tab {
+    font-size: 13px;
+    font-family: inherit;
+    padding: 8px 2px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+  }
+  .period-tab.active {
+    color: var(--danger-text);
+    border-bottom: 2px solid var(--danger-border);
+    font-weight: 600;
+  }
+  .room-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .room-card.warn {
+    border-color: var(--warning-border);
+    background: var(--warning-bg);
+  }
+  .room-head {
+    display: flex;
+    gap: 12px;
+  }
+  .room-head-main {
+    flex: 1;
+    min-width: 0;
+  }
+  .room-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .room-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-text);
+  }
+  .warn .room-name, .warn .room-hotel, .warn .room-meta { color: var(--warning-text); }
+  .dot { color: var(--text-muted); font-size: 13px; }
+  .room-hotel { font-size: 13px; color: var(--text-secondary); }
+  .pill-active {
+    font-size: 11px;
+    color: var(--success-text);
+    border: 1px solid var(--success-border);
+    background: var(--success-bg);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .room-meta { font-size: 12.5px; color: var(--text-secondary); margin-top: 8px; }
+  .room-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .room-price { font-size: 14px; white-space: nowrap; }
+  .room-price span { color: var(--text-muted); font-size: 12px; }
+  .kebab {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 18px;
+    padding: 4px 6px;
+  }
+  .allotment-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .warn .allotment-section { border-top-color: var(--warning-border); }
+  .allotment-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .allotment-label { font-size: 12.5px; color: var(--text-secondary); }
+  .warn .allotment-label { color: var(--warning-text); }
+  .fs-toggle {
+    display: flex;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .fs-toggle button {
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-family: inherit;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .fs-toggle button.active {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+  }
+  .status-created {
+    font-size: 12px;
+    color: var(--success-text);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .bulk-btn {
+    margin-left: auto;
+    padding: 7px 14px;
+    font-size: 12.5px;
+    font-family: inherit;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-1);
+    cursor: pointer;
+  }
+  .bulk-btn:hover { background: #eceae1; }
+  .freesale-note { font-size: 12px; color: var(--text-muted); margin: 10px 0 0; line-height: 1.5; }
+  .warn .freesale-note { color: var(--warning-text); }
+  .reserve-block { margin-top: 14px; }
+  .cols { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-end; }
+  .col-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; }
+  .warn .col-label { color: var(--warning-text); }
+  .counter {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+  }
+  .counter button {
+    width: 28px;
+    height: 30px;
+    border: none;
+    background: var(--surface-1);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text-secondary);
+  }
+  .counter button:hover { background: #eceae1; }
+  .counter input {
+    width: 38px;
+    height: 30px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: var(--danger-text);
+    font-weight: 600;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .readonly-box {
+    height: 30px;
+    min-width: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-1);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 10px;
+  }
+  .reserved-editable input { color: var(--success-text); }
+  .reserved-editable.zero input { color: var(--text-muted); }
+  .reserved-na {
+    height: 30px;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-1);
+    border-radius: var(--radius);
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 0 10px;
+  }
+  .caption { font-size: 12px; color: var(--text-muted); margin: 10px 0 0; line-height: 1.5; }
+  .warn .caption { color: var(--warning-text); }
+  footer.note {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div>
+      <h1>Repeat tour with hotel</h1>
+      <p>Accommodation configuration for repeated tour date periods</p>
+    </div>
+    <span class="badge-proto">Prototype &middot; for review</span>
+  </div>
+
+  <div class="app-frame">
+    <p class="section-label">Room options</p>
+
+    <div id="period-tabs">
+      <button class="period-tab active" data-p="1">28 Sep – 5 Oct 2026</button>
+      <button class="period-tab " data-p="2">12 Oct – 19 Oct 2026</button>
+      <button class="period-tab " data-p="3">26 Oct – 2 Nov 2026</button>
+      <button class="period-tab " data-p="4">9 Nov – 16 Nov 2026</button>
+    </div>
+
+    <div class="period-panel" data-panel="1">
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Double room, standard</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 2 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 4 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">4,200 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1d-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1d-fixed" class="fixed-input" value="4">
+                  <button class="counter-btn" data-target="p1d-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1d-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1d-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p1d-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">4</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p1d-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1d-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p1d-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (4 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Single room</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 1 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 22 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 6 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">5,100 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            <span class="status-created">&#10003; Allotment created</span>
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1s-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1s-fixed" class="fixed-input" value="6">
+                  <button class="counter-btn" data-target="p1s-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1s-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1s-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p1s-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">6</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p1s-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1s-reserved" class="reserved-input" value="6">
+                  <button class="reserved-btn" data-target="p1s-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Reserved rooms matches the allotment total &mdash; up to date, capped at 6.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card warn">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Suite</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 2 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 2 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 3 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">7,800 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1su-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1su-fixed" class="fixed-input" value="2">
+                  <button class="counter-btn" data-target="p1su-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1su-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1su-calloff" class="calloff-input" value="1">
+                  <button class="counter-btn" data-target="p1su-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p1su-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1su-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p1su-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">&#9888; Original tour reserved 3 fixed. Only 2 fixed available &mdash; 1 added as call-off pending hotel confirmation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Triple room, shared</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 5 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">3,900 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1t-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1t-fixed" class="fixed-input" value="5">
+                  <button class="counter-btn" data-target="p1t-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p1t-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1t-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p1t-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">5</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p1t-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p1t-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p1t-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (5 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="period-panel" data-panel="2" style="display:none;">
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Double room, standard</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 2 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 3 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">4,200 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2d-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2d-fixed" class="fixed-input" value="3">
+                  <button class="counter-btn" data-target="p2d-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2d-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2d-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p2d-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p2d-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2d-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p2d-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (3 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Single room</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 1 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 18 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 6 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">5,100 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            <span class="status-created">&#10003; Allotment created</span>
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2s-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2s-fixed" class="fixed-input" value="5">
+                  <button class="counter-btn" data-target="p2s-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2s-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2s-calloff" class="calloff-input" value="1">
+                  <button class="counter-btn" data-target="p2s-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">6</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p2s-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2s-reserved" class="reserved-input" value="6">
+                  <button class="reserved-btn" data-target="p2s-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Reserved rooms matches the allotment total &mdash; up to date, capped at 6.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card warn">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Suite</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 2 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 2 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 3 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">7,800 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2su-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2su-fixed" class="fixed-input" value="2">
+                  <button class="counter-btn" data-target="p2su-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2su-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2su-calloff" class="calloff-input" value="1">
+                  <button class="counter-btn" data-target="p2su-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p2su-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2su-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p2su-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">&#9888; Original tour reserved 3 fixed. Only 2 fixed available &mdash; 1 added as call-off pending hotel confirmation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Triple room, shared</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 4 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">3,900 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2t-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2t-fixed" class="fixed-input" value="4">
+                  <button class="counter-btn" data-target="p2t-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p2t-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2t-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p2t-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">4</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p2t-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p2t-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p2t-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (4 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="period-panel" data-panel="3" style="display:none;">
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Double room, standard</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 2 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 4 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">4,200 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3d-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3d-fixed" class="fixed-input" value="4">
+                  <button class="counter-btn" data-target="p3d-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3d-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3d-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p3d-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">4</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p3d-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3d-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p3d-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (4 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Single room</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 1 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 25 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 6 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">5,100 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3s-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3s-fixed" class="fixed-input" value="6">
+                  <button class="counter-btn" data-target="p3s-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3s-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3s-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p3s-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">6</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p3s-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3s-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p3s-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Not yet created for this period. Prefilled from original tour's reservation (6 fixed).</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Suite</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 2 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 3 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 3 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">7,800 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3su-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3su-fixed" class="fixed-input" value="3">
+                  <button class="counter-btn" data-target="p3su-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3su-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3su-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p3su-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p3su-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3su-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p3su-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Not yet created for this period. Full 3 fixed available, matching the original reservation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Triple room, shared</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 5 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">3,900 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3t-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3t-fixed" class="fixed-input" value="5">
+                  <button class="counter-btn" data-target="p3t-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p3t-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3t-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p3t-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">5</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p3t-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p3t-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p3t-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (5 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="period-panel" data-panel="4" style="display:none;">
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Double room, standard</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 2 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 2 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">4,200 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4d-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4d-fixed" class="fixed-input" value="2">
+                  <button class="counter-btn" data-target="p4d-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4d-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4d-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p4d-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">2</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p4d-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4d-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p4d-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (2 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card warn">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Single room</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 1 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 10 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 6 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">5,100 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4s-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4s-fixed" class="fixed-input" value="4">
+                  <button class="counter-btn" data-target="p4s-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4s-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4s-calloff" class="calloff-input" value="2">
+                  <button class="counter-btn" data-target="p4s-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">6</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p4s-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4s-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p4s-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">&#9888; Original tour reserved 6 fixed. Only 4 fixed available &mdash; 2 added as call-off pending hotel confirmation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Suite</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 2 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 3 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 3 (reserved)</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">7,800 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="">Free sale</button>
+              <button data-mode="reserve" class="active">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:none;"></p>
+          <div class="reserve-block" style="display:block;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4su-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4su-fixed" class="fixed-input" value="3">
+                  <button class="counter-btn" data-target="p4su-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4su-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4su-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p4su-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:flex;">
+                  <button class="reserved-btn" data-target="p4su-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4su-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p4su-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:none;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Not yet created for this period. Full 3 fixed available, matching the original reservation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-head">
+          <div class="room-head-main">
+            <div class="room-title-row">
+              <span class="room-name">Triple room, shared</span>
+              <span class="dot">&middot;</span>
+              <span class="room-hotel">Hotel Illa d'Or, Palma de Mallorca</span>
+              <span class="pill-active">Active</span>
+            </div>
+            <div class="room-meta">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+            <div class="room-meta">Available rooms: 3 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+          </div>
+          <div class="room-side">
+            <span class="room-price">3,900 SEK <span>/person</span></span>
+            <button class="kebab" aria-label="Room options">&#8942;</button>
+          </div>
+        </div>
+        <div class="allotment-section">
+          <div class="allotment-row">
+            <span class="allotment-label">Room usage this period</span>
+            <div class="fs-toggle">
+              <button data-mode="freesale" class="active">Free sale</button>
+              <button data-mode="reserve" class="">Reserve</button>
+            </div>
+            
+            <button class="bulk-btn">Bulk create allotment</button>
+          </div>
+          <p class="freesale-note" style="display:;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+          <div class="reserve-block" style="display:none;">
+            <div class="cols">
+              <div>
+                <div class="col-label">Fixed</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4t-fixed" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4t-fixed" class="fixed-input" value="3">
+                  <button class="counter-btn" data-target="p4t-fixed" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Call-off</div>
+                <div class="counter">
+                  <button class="counter-btn" data-target="p4t-calloff" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4t-calloff" class="calloff-input" value="0">
+                  <button class="counter-btn" data-target="p4t-calloff" data-op="1">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="col-label">Total rooms</div>
+                <div class="readonly-box"><span class="total-rooms">3</span></div>
+              </div>
+              <div>
+                <div class="col-label">Reserved rooms</div>
+                <div class="reserved-editable zero counter" style="display:none;">
+                  <button class="reserved-btn" data-target="p4t-reserved" data-op="-1">&minus;</button>
+                  <input type="text" readonly id="p4t-reserved" class="reserved-input" value="0">
+                  <button class="reserved-btn" data-target="p4t-reserved" data-op="1">+</button>
+                </div>
+                <div class="reserved-na" style="display:flex;">Not capped, free sale</div>
+              </div>
+            </div>
+            <p class="caption">Allotment prefilled from original tour's available inventory (3 fixed). Switch to reserve to cap this tour's usage against it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">Interactive prototype &middot; toggles, counters and bulk create respond, values reset on reload</footer>
+</div>
+
+<script>
+var tabs = document.querySelectorAll('.period-tab');
+var panels = document.querySelectorAll('.period-panel');
+function showPeriod(p){
+  panels.forEach(function(panel){ panel.style.display = panel.getAttribute('data-panel') === p ? 'block' : 'none'; });
+  tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-p') === p); });
+}
+tabs.forEach(function(t){ t.addEventListener('click', function(){ showPeriod(t.getAttribute('data-p')); }); });
+showPeriod('1');
+
+function applyMode(card, mode){
+  card.querySelectorAll('.fs-toggle button').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+  });
+  var editable = card.querySelector('.reserved-editable');
+  var na = card.querySelector('.reserved-na');
+  if (editable) editable.style.display = (mode === 'reserve') ? 'flex' : 'none';
+  if (na) na.style.display = (mode === 'reserve') ? 'none' : 'flex';
+  var block = card.querySelector('.reserve-block');
+  var note = card.querySelector('.freesale-note');
+  block.style.display = (mode === 'reserve') ? 'block' : 'none';
+  if (note) note.style.display = (mode === 'reserve') ? 'none' : 'block';
+}
+
+document.querySelectorAll('.fs-toggle').forEach(function(toggle){
+  toggle.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyMode(toggle.closest('.room-card'), this.getAttribute('data-mode'));
+    });
+  });
+});
+
+document.querySelectorAll('.bulk-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var card = this.closest('.room-card');
+    var block = card.querySelector('.reserve-block');
+    var note = card.querySelector('.freesale-note');
+    var open = block.style.display !== 'none';
+    block.style.display = open ? 'none' : 'block';
+    if (note) note.style.display = open ? 'block' : 'none';
+  });
+});
+
+function recalc(card){
+  var fixed = parseInt(card.querySelector('.fixed-input').value, 10) || 0;
+  var calloff = parseInt(card.querySelector('.calloff-input').value, 10) || 0;
+  var total = fixed + calloff;
+  card.querySelector('.total-rooms').textContent = total;
+  var reservedInput = card.querySelector('.reserved-input');
+  var reserved = parseInt(reservedInput.value, 10) || 0;
+  if (reserved > total) {
+    reservedInput.value = total;
+  }
+}
+
+document.querySelectorAll('.counter-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = document.getElementById(this.getAttribute('data-target'));
+    var op = parseInt(this.getAttribute('data-op'), 10);
+    var val = Math.max(0, (parseInt(input.value, 10) || 0) + op);
+    input.value = val;
+    recalc(this.closest('.room-card'));
+  });
+});
+
+document.querySelectorAll('.reserved-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var card = this.closest('.room-card');
+    var total = parseInt(card.querySelector('.total-rooms').textContent, 10) || 0;
+    var input = document.getElementById(this.getAttribute('data-target'));
+    var op = parseInt(this.getAttribute('data-op'), 10);
+    var val = (parseInt(input.value, 10) || 0) + op;
+    val = Math.max(0, Math.min(val, total));
+    input.value = val;
+  });
+});
+</script>
+</body>
+</html>
