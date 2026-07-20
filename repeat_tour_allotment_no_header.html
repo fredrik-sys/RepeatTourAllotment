@@ -1,0 +1,290 @@
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Wireframe: bulk create allotment opens the fixed and call-off panel independently of the free sale or reserve toggle. Reserved rooms is only editable in reserve mode; in free sale it shows as not capped.</h2>
+
+<p style="font-size:14px;font-weight:500;margin:0 0 10px;">Room options</p>
+
+<div id="period-tabs" style="display:flex;gap:16px;border-bottom:0.5px solid var(--border);margin-bottom:16px;overflow-x:auto;">
+  <button class="period-tab" data-p="1" style="font-size:12px;padding:7px 2px;border:none;background:transparent;cursor:pointer;white-space:nowrap;">28 Sep &ndash; 5 Oct 2026</button>
+  <button class="period-tab" data-p="2" style="font-size:12px;padding:7px 2px;border:none;background:transparent;cursor:pointer;white-space:nowrap;">12 Oct &ndash; 19 Oct 2026</button>
+</div>
+
+<div class="period-panel" data-panel="1">
+
+  <div class="room-card" style="border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--text-accent);font-weight:500;">Double room, standard</span>
+          <span style="color:var(--text-muted);font-size:12px;">&middot;</span>
+          <span style="font-size:12px;color:var(--text-secondary);">Hotel Illa d'Or, Palma de Mallorca</span>
+          <span style="font-size:11px;color:var(--text-success);border:0.5px solid var(--border-success);border-radius:var(--radius);padding:1px 8px;">Active</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 2 &nbsp;|&nbsp; Currency: SEK</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">Available rooms: 4 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: full inventory</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+        <span style="font-size:13px;white-space:nowrap;">4,200 SEK <span style="color:var(--text-muted);font-size:12px;">/person</span></span>
+        <button aria-label="Room options" style="padding:6px 8px;"><i class="ti ti-dots-vertical" style="font-size:16px;" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <label style="font-size:12px;color:var(--text-secondary);">Room usage this period</label>
+        <div class="fs-toggle" style="display:flex;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+          <button data-mode="freesale" style="padding:5px 9px;font-size:12px;border:none;background:var(--bg-accent);color:var(--text-accent);cursor:pointer;">Free sale</button>
+          <button data-mode="reserve" style="padding:5px 9px;font-size:12px;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;">Reserve</button>
+        </div>
+        <button class="bulk-create-btn" style="margin-left:auto;padding:6px 12px;font-size:12px;">Bulk create allotment</button>
+      </div>
+      <p class="freesale-note" style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Draws from live hotel inventory for bookings. Bulk create allotment provisions or adjusts the hotel's fixed and call-off pool for this period, independent of free sale or reserve.</p>
+      <div class="reserve-block" style="display:none;margin-top:10px;">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Fixed</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="d1-fixed" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="d1-fixed" class="fixed-input" value="4" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="d1-fixed" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Call-off</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="d1-calloff" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="d1-calloff" class="calloff-input" value="0" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="d1-calloff" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Total rooms</div>
+            <div style="height:28px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:13px;font-weight:500;padding:0 8px;"><span class="total-rooms">4</span></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Reserved rooms</div>
+            <div class="reserved-editable" style="display:none;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="reserved-btn" data-target="d1-reserved" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="d1-reserved" class="reserved-input" value="0" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-muted);font-weight:500;"/>
+              <button class="reserved-btn" data-target="d1-reserved" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+            <div class="reserved-na" style="height:28px;min-width:96px;display:flex;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:11px;color:var(--text-muted);padding:0 8px;">Not capped, free sale</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Allotment prefilled from original tour's available inventory (4 fixed). Switch to reserve to cap this tour's usage against it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="room-card" style="border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--text-accent);font-weight:500;">Single room</span>
+          <span style="color:var(--text-muted);font-size:12px;">&middot;</span>
+          <span style="font-size:12px;color:var(--text-secondary);">Hotel Illa d'Or, Palma de Mallorca</span>
+          <span style="font-size:11px;color:var(--text-success);border:0.5px solid var(--border-success);border-radius:var(--radius);padding:1px 8px;">Active</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;">Min adult per room: 1 &nbsp;|&nbsp; Max adult per room: 1 &nbsp;|&nbsp; Currency: SEK</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">Available rooms: 22 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 6 (reserved)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+        <span style="font-size:13px;white-space:nowrap;">5,100 SEK <span style="color:var(--text-muted);font-size:12px;">/person</span></span>
+        <button aria-label="Room options" style="padding:6px 8px;"><i class="ti ti-dots-vertical" style="font-size:16px;" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <label style="font-size:12px;color:var(--text-secondary);">Room usage this period</label>
+        <div class="fs-toggle" style="display:flex;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+          <button data-mode="freesale" style="padding:5px 9px;font-size:12px;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;">Free sale</button>
+          <button data-mode="reserve" style="padding:5px 9px;font-size:12px;border:none;background:var(--bg-accent);color:var(--text-accent);cursor:pointer;">Reserve</button>
+        </div>
+        <span style="font-size:11px;color:var(--text-success);display:flex;align-items:center;gap:4px;"><i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>Allotment created</span>
+        <button class="bulk-create-btn" style="margin-left:auto;padding:6px 12px;font-size:12px;">Bulk create allotment</button>
+      </div>
+      <p class="freesale-note" style="display:none;font-size:11px;color:var(--text-muted);margin:8px 0 0;"></p>
+      <div class="reserve-block" style="display:block;margin-top:10px;">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Fixed</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="s1-fixed" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="s1-fixed" class="fixed-input" value="6" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="s1-fixed" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Call-off</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="s1-calloff" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="s1-calloff" class="calloff-input" value="0" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="s1-calloff" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Total rooms</div>
+            <div style="height:28px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:13px;font-weight:500;padding:0 8px;"><span class="total-rooms">6</span></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Reserved rooms</div>
+            <div class="reserved-editable" style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="reserved-btn" data-target="s1-reserved" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="s1-reserved" class="reserved-input" value="6" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-success);font-weight:500;"/>
+              <button class="reserved-btn" data-target="s1-reserved" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+            <div class="reserved-na" style="display:none;height:28px;min-width:96px;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:11px;color:var(--text-muted);padding:0 8px;">Not capped, free sale</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Reserved rooms matches the allotment total &mdash; up to date, capped at 6.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="period-panel" data-panel="2" style="display:none;">
+  <div class="room-card" style="border:0.5px solid var(--border-warning);background:var(--bg-warning);border-radius:12px;padding:14px 16px;">
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--text-warning);font-weight:500;">Suite</span>
+          <span style="color:var(--text-warning);font-size:12px;">&middot;</span>
+          <span style="font-size:12px;color:var(--text-warning);">Hotel Illa d'Or, Palma de Mallorca</span>
+          <span style="font-size:11px;color:var(--text-success);border:0.5px solid var(--border-success);border-radius:var(--radius);padding:1px 8px;">Active</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-warning);margin-top:8px;">Min adult per room: 2 &nbsp;|&nbsp; Max adult per room: 3 &nbsp;|&nbsp; Currency: SEK</div>
+        <div style="font-size:12px;color:var(--text-warning);margin-top:6px;">Available rooms: 2 &nbsp;|&nbsp; Booked rooms: 0 &nbsp;|&nbsp; Number of rooms: 3 (reserved)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+        <span style="font-size:13px;white-space:nowrap;">7,800 SEK <span style="color:var(--text-muted);font-size:12px;">/person</span></span>
+        <button aria-label="Room options" style="padding:6px 8px;"><i class="ti ti-dots-vertical" style="font-size:16px;" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border-warning);">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <label style="font-size:12px;color:var(--text-warning);">Room usage this period</label>
+        <div class="fs-toggle" style="display:flex;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+          <button data-mode="freesale" style="padding:5px 9px;font-size:12px;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;">Free sale</button>
+          <button data-mode="reserve" style="padding:5px 9px;font-size:12px;border:none;background:var(--bg-accent);color:var(--text-accent);cursor:pointer;">Reserve</button>
+        </div>
+        <button class="bulk-create-btn" style="margin-left:auto;padding:6px 12px;font-size:12px;">Bulk create allotment</button>
+      </div>
+      <p class="freesale-note" style="display:none;font-size:11px;color:var(--text-warning);margin:8px 0 0;"></p>
+      <div class="reserve-block" style="display:block;margin-top:10px;">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
+          <div>
+            <div style="font-size:11px;color:var(--text-warning);margin-bottom:4px;">Fixed</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="su2-fixed" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="su2-fixed" class="fixed-input" value="2" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="su2-fixed" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-warning);margin-bottom:4px;">Call-off</div>
+            <div style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="counter-btn" data-target="su2-calloff" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="su2-calloff" class="calloff-input" value="1" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-danger);font-weight:500;"/>
+              <button class="counter-btn" data-target="su2-calloff" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-warning);margin-bottom:4px;">Total rooms</div>
+            <div style="height:28px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:13px;font-weight:500;padding:0 8px;"><span class="total-rooms">3</span></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-warning);margin-bottom:4px;">Reserved rooms</div>
+            <div class="reserved-editable" style="display:flex;align-items:center;border:0.5px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;">
+              <button class="reserved-btn" data-target="su2-reserved" data-op="-1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">&minus;</button>
+              <input type="text" readonly id="su2-reserved" class="reserved-input" value="0" style="width:36px;text-align:center;border:none;background:transparent;color:var(--text-muted);font-weight:500;"/>
+              <button class="reserved-btn" data-target="su2-reserved" data-op="1" style="width:26px;height:28px;border:none;background:var(--surface-1);cursor:pointer;">+</button>
+            </div>
+            <div class="reserved-na" style="display:none;height:28px;min-width:96px;align-items:center;justify-content:center;background:var(--surface-1);border-radius:var(--radius);font-size:11px;color:var(--text-muted);padding:0 8px;">Not capped, free sale</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text-warning);margin:8px 0 0;"><i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px;" aria-hidden="true"></i> Original tour reserved 3 fixed. Only 2 fixed available &mdash; 1 added as call-off pending hotel confirmation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var tabs = document.querySelectorAll('.period-tab');
+var panels = document.querySelectorAll('.period-panel');
+function showPeriod(p){
+  panels.forEach(function(panel){ panel.style.display = panel.getAttribute('data-panel') === p ? 'block' : 'none'; });
+  tabs.forEach(function(t){
+    var active = t.getAttribute('data-p') === p;
+    t.style.color = active ? 'var(--text-danger)' : 'var(--text-muted)';
+    t.style.borderBottom = active ? '2px solid var(--border-danger)' : '2px solid transparent';
+    t.style.fontWeight = active ? '500' : '400';
+  });
+}
+tabs.forEach(function(t){ t.addEventListener('click', function(){ showPeriod(t.getAttribute('data-p')); }); });
+showPeriod('1');
+
+function applyMode(card, mode){
+  card.querySelectorAll('.fs-toggle button').forEach(function(b){
+    var active = b.getAttribute('data-mode') === mode;
+    b.style.background = active ? 'var(--bg-accent)' : 'transparent';
+    b.style.color = active ? 'var(--text-accent)' : 'var(--text-secondary)';
+  });
+  var editable = card.querySelector('.reserved-editable');
+  var na = card.querySelector('.reserved-na');
+  if(editable) editable.style.display = (mode === 'reserve') ? 'flex' : 'none';
+  if(na) na.style.display = (mode === 'reserve') ? 'none' : 'flex';
+}
+
+document.querySelectorAll('.fs-toggle').forEach(function(toggle){
+  toggle.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyMode(toggle.closest('.room-card'), this.getAttribute('data-mode'));
+    });
+  });
+});
+
+document.querySelectorAll('.bulk-create-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var card = this.closest('.room-card');
+    var block = card.querySelector('.reserve-block');
+    var note = card.querySelector('.freesale-note');
+    var open = block.style.display !== 'none';
+    block.style.display = open ? 'none' : 'block';
+    if(note) note.style.display = open ? 'block' : 'none';
+  });
+});
+
+function recalc(card){
+  var fixed = parseInt(card.querySelector('.fixed-input').value, 10) || 0;
+  var calloff = parseInt(card.querySelector('.calloff-input').value, 10) || 0;
+  var total = fixed + calloff;
+  card.querySelector('.total-rooms').textContent = total;
+  var reservedInput = card.querySelector('.reserved-input');
+  var reserved = parseInt(reservedInput.value, 10) || 0;
+  if(reserved > total){
+    reservedInput.value = total;
+  }
+  return total;
+}
+
+document.querySelectorAll('.counter-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var input = document.getElementById(this.getAttribute('data-target'));
+    var op = parseInt(this.getAttribute('data-op'), 10);
+    var val = Math.max(0, (parseInt(input.value, 10) || 0) + op);
+    input.value = val;
+    recalc(this.closest('.room-card'));
+  });
+});
+
+document.querySelectorAll('.reserved-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var card = this.closest('.room-card');
+    var total = parseInt(card.querySelector('.total-rooms').textContent, 10) || 0;
+    var input = document.getElementById(this.getAttribute('data-target'));
+    var op = parseInt(this.getAttribute('data-op'), 10);
+    var val = (parseInt(input.value, 10) || 0) + op;
+    val = Math.max(0, Math.min(val, total));
+    input.value = val;
+  });
+});
+</script>
